@@ -1,33 +1,55 @@
 <template>
-  <div :class="[calendarClass, 'vdp-datepicker__calendar']" v-show="showDayView" :style="calendarStyle" @mousedown.prevent>
-    <slot name="beforeCalendarHeader"></slot>
+  <div
+    v-show="showDayView"
+    :class="[calendarClass, 'vdp-datepicker__calendar']"
+    :style="calendarStyle"
+    @mousedown.prevent
+  >
+    <slot name="beforeCalendarHeader" />
     <header>
       <span
-        @click="isRtl ? nextMonth() : previousMonth()"
         class="prev"
-        :class="{'disabled': isLeftNavDisabled}">&lt;</span>
-      <span class="day__month_btn" @click="showMonthCalendar" :class="allowedToShowView('month') ? 'up' : ''">{{ isYmd ? currYearName : currMonthName }} {{ isYmd ? currMonthName : currYearName }}</span>
+        :class="{'disabled': isLeftNavDisabled}"
+        @click="isRtl ? nextMonth() : previousMonth()"
+      >&lt;</span>
       <span
-        @click="isRtl ? previousMonth() : nextMonth()"
+        class="day__month_btn"
+        :class="allowedToShowView('month') ? 'up' : ''"
+        @click="showMonthCalendar"
+      >
+        {{
+          isYmd ? currYearName : currMonthName
+        }} {{
+          isYmd ? currMonthName : currYearName
+        }}
+      </span>
+      <span
         class="next"
-        :class="{'disabled': isRightNavDisabled}">&gt;</span>
+        :class="{'disabled': isRightNavDisabled}"
+        @click="isRtl ? previousMonth() : nextMonth()"
+      >&gt;</span>
     </header>
     <div :class="isRtl ? 'flex-rtl' : ''">
-      <span class="cell day-header" v-for="d in daysOfWeek" :key="d.timestamp">{{ d }}</span>
+      <span v-for="d in daysOfWeek" :key="d.timestamp" class="cell day-header">{{ d }}</span>
       <template v-if="blankDays > 0">
-        <span class="cell day blank" v-for="d in blankDays" :key="d.timestamp"></span>
-      </template><!--
-      --><span class="cell day"
-          v-for="day in days"
-          :key="day.timestamp"
-          :class="dayClasses(day)"
-          v-html="dayCellContent(day)"
-          @click="selectDate(day)"></span>
+        <span v-for="d in blankDays" :key="d.timestamp" class="cell day blank" />
+      </template>
+      <span
+        v-for="day in days"
+        :key="day.timestamp"
+        class="cell day"
+        :class="dayClasses(day)"
+        @click="selectDate(day)"
+      >
+        {{ dayCellContent(day) }}
+      </span>
     </div>
   </div>
 </template>
 <script>
+/* eslint-disable vue/require-default-prop */
 import { makeDateUtils } from '../utils/DateUtils'
+
 export default {
   props: {
     showDayView: Boolean,
@@ -75,7 +97,7 @@ export default {
      */
     blankDays () {
       const d = this.pageDate
-      let dObj = this.useUtc
+      const dObj = this.useUtc
         ? new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))
         : new Date(d.getFullYear(), d.getMonth(), 1, d.getHours(), d.getMinutes())
       if (this.mondayFirst) {
@@ -88,12 +110,12 @@ export default {
      */
     days () {
       const d = this.pageDate
-      let days = []
+      const days = []
       // set up a new date object to the beginning of the current 'page'
-      let dObj = this.useUtc
+      const dObj = this.useUtc
         ? new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))
         : new Date(d.getFullYear(), d.getMonth(), 1, d.getHours(), d.getMinutes())
-      let daysInMonth = this.utils.daysInMonth(this.utils.getFullYear(dObj), this.utils.getMonth(dObj))
+      const daysInMonth = this.utils.daysInMonth(this.utils.getFullYear(dObj), this.utils.getMonth(dObj))
       for (let i = 0; i < daysInMonth; i++) {
         days.push({
           date: this.utils.getDate(dObj),
@@ -179,7 +201,7 @@ export default {
      * @param {Number} incrementBy
      */
     changeMonth (incrementBy) {
-      let date = this.pageDate
+      const date = this.pageDate
       this.utils.setMonth(date, this.utils.getMonth(date) + incrementBy)
       this.$emit('changedMonth', date)
     },
@@ -199,7 +221,7 @@ export default {
       if (!this.disabledDates || !this.disabledDates.to) {
         return false
       }
-      let d = this.pageDate
+      const d = this.pageDate
       return this.utils.getMonth(this.disabledDates.to) >= this.utils.getMonth(d) &&
         this.utils.getFullYear(this.disabledDates.to) >= this.utils.getFullYear(d)
     },
@@ -219,22 +241,22 @@ export default {
       if (!this.disabledDates || !this.disabledDates.from) {
         return false
       }
-      let d = this.pageDate
+      const d = this.pageDate
       return this.utils.getMonth(this.disabledDates.from) <= this.utils.getMonth(d) &&
         this.utils.getFullYear(this.disabledDates.from) <= this.utils.getFullYear(d)
     },
     /**
      * Whether a day is selected
-     * @param {Date}
      * @return {Boolean}
+     * @param dObj
      */
     isSelectedDate (dObj) {
       return this.selectedDate && this.utils.compareDates(this.selectedDate, dObj)
     },
     /**
      * Whether a day is disabled
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isDisabledDate (date) {
       let disabledDates = false
@@ -267,10 +289,10 @@ export default {
           }
         })
       }
-      if (typeof this.disabledDates.days !== 'undefined' && this.disabledDates.days.indexOf(this.utils.getDay(date)) !== -1) {
+      if (typeof this.disabledDates.days !== 'undefined' && this.disabledDates.days.includes(this.utils.getDay(date))) {
         disabledDates = true
       }
-      if (typeof this.disabledDates.daysOfMonth !== 'undefined' && this.disabledDates.daysOfMonth.indexOf(this.utils.getDate(date)) !== -1) {
+      if (typeof this.disabledDates.daysOfMonth !== 'undefined' && this.disabledDates.daysOfMonth.includes(this.utils.getDate(date))) {
         disabledDates = true
       }
       if (typeof this.disabledDates.customPredictor === 'function' && this.disabledDates.customPredictor(date)) {
@@ -280,8 +302,8 @@ export default {
     },
     /**
      * Whether a day is highlighted (only if it is not disabled already except when highlighted.includeDisabled is true)
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isHighlightedDate (date) {
       if (!(this.highlighted && this.highlighted.includeDisabled) && this.isDisabledDate(date)) {
@@ -307,11 +329,11 @@ export default {
         highlighted = date >= this.highlighted.from && date <= this.highlighted.to
       }
 
-      if (typeof this.highlighted.days !== 'undefined' && this.highlighted.days.indexOf(this.utils.getDay(date)) !== -1) {
+      if (typeof this.highlighted.days !== 'undefined' && this.highlighted.days.includes(this.utils.getDay(date))) {
         highlighted = true
       }
 
-      if (typeof this.highlighted.daysOfMonth !== 'undefined' && this.highlighted.daysOfMonth.indexOf(this.utils.getDate(date)) !== -1) {
+      if (typeof this.highlighted.daysOfMonth !== 'undefined' && this.highlighted.daysOfMonth.includes(this.utils.getDate(date))) {
         highlighted = true
       }
 
@@ -323,13 +345,13 @@ export default {
     },
     dayClasses (day) {
       return {
-        'selected': day.isSelected,
-        'disabled': day.isDisabled,
-        'highlighted': day.isHighlighted,
-        'today': day.isToday,
-        'weekend': day.isWeekend,
-        'sat': day.isSaturday,
-        'sun': day.isSunday,
+        selected: day.isSelected,
+        disabled: day.isDisabled,
+        highlighted: day.isHighlighted,
+        today: day.isToday,
+        weekend: day.isWeekend,
+        sat: day.isSaturday,
+        sun: day.isSunday,
         'highlight-start': day.isHighlightStart,
         'highlight-end': day.isHighlightEnd
       }
@@ -337,8 +359,8 @@ export default {
     /**
      * Whether a day is highlighted and it is the first date
      * in the highlighted range of dates
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isHighlightStart (date) {
       return this.isHighlightedDate(date) &&
@@ -350,8 +372,8 @@ export default {
     /**
      * Whether a day is highlighted and it is the first date
      * in the highlighted range of dates
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isHighlightEnd (date) {
       return this.isHighlightedDate(date) &&
@@ -370,6 +392,4 @@ export default {
     }
   }
 }
-// eslint-disable-next-line
-;
 </script>

@@ -1,27 +1,37 @@
 <template>
-  <div :class="[calendarClass, 'vdp-datepicker__calendar']" v-show="showYearView" :style="calendarStyle" @mousedown.prevent>
-    <slot name="beforeCalendarHeader"></slot>
+  <div
+    v-show="showYearView"
+    :class="[calendarClass, 'vdp-datepicker__calendar']"
+    :style="calendarStyle"
+    @mousedown.prevent
+  >
+    <slot name="beforeCalendarHeader" />
     <header>
       <span
-        @click="isRtl ? nextDecade() : previousDecade()"
         class="prev"
-        :class="{'disabled': isLeftNavDisabled}">&lt;</span>
+        :class="{'disabled': isLeftNavDisabled}"
+        @click="isRtl ? nextDecade() : previousDecade()"
+      >&lt;</span>
       <span>{{ getPageDecade }}</span>
       <span
-        @click="isRtl ? previousDecade() : nextDecade()"
         class="next"
-        :class="{'disabled': isRightNavDisabled}">&gt;</span>
+        :class="{'disabled': isRightNavDisabled}"
+        @click="isRtl ? previousDecade() : nextDecade()"
+      >&gt;</span>
     </header>
     <span
-      class="cell year"
       v-for="year in years"
       :key="year.timestamp"
+      class="cell year"
       :class="{ 'selected': year.isSelected, 'disabled': year.isDisabled }"
-      @click.stop="selectYear(year)">{{ year.year }}</span>
+      @click.stop="selectYear(year)"
+    >{{ year.year }}</span>
   </div>
 </template>
 <script>
+/* eslint-disable vue/require-default-prop */
 import { makeDateUtils } from '../utils/DateUtils'
+
 export default {
   props: {
     showYearView: Boolean,
@@ -37,12 +47,18 @@ export default {
     allowedToShowView: Function,
     useUtc: Boolean
   },
+  data () {
+    const constructedDateUtils = makeDateUtils(this.useUtc)
+    return {
+      utils: constructedDateUtils
+    }
+  },
   computed: {
     years () {
       const d = this.pageDate
-      let years = []
+      const years = []
       // set up a new date object to the beginning of the current 'page'7
-      let dObj = this.useUtc
+      const dObj = this.useUtc
         ? new Date(Date.UTC(Math.floor(d.getUTCFullYear() / 10) * 10, d.getUTCMonth(), d.getUTCDate()))
         : new Date(Math.floor(d.getFullYear() / 10) * 10, d.getMonth(), d.getDate(), d.getHours(), d.getMinutes())
       for (let i = 0; i < 10; i++) {
@@ -84,12 +100,6 @@ export default {
         : this.isNextDecadeDisabled(this.pageTimestamp)
     }
   },
-  data () {
-    const constructedDateUtils = makeDateUtils(this.useUtc)
-    return {
-      utils: constructedDateUtils
-    }
-  },
   methods: {
     selectYear (year) {
       if (year.isDisabled) {
@@ -98,7 +108,7 @@ export default {
       this.$emit('selectYear', year)
     },
     changeYear (incrementBy) {
-      let date = this.pageDate
+      const date = this.pageDate
       this.utils.setFullYear(date, this.utils.getFullYear(date) + incrementBy)
       this.$emit('changedDecade', date)
     },
@@ -133,16 +143,16 @@ export default {
 
     /**
      * Whether the selected date is in this year
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isSelectedYear (date) {
       return this.selectedDate && this.utils.getFullYear(this.selectedDate) === this.utils.getFullYear(date)
     },
     /**
      * Whether a year is disabled
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isDisabledYear (date) {
       let disabledDates = false
@@ -169,6 +179,4 @@ export default {
     }
   }
 }
-// eslint-disable-next-line
-;
 </script>

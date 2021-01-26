@@ -1,7 +1,13 @@
 <template>
   <div :class="{'input-group' : bootstrapStyling}">
     <!-- Calendar Button -->
-    <span v-if="calendarButton" class="vdp-datepicker__calendar-button" :class="{'input-group-prepend' : bootstrapStyling}" @click="showCalendar" v-bind:style="{'cursor:not-allowed;' : disabled}">
+    <span
+      v-if="calendarButton"
+      class="vdp-datepicker__calendar-button"
+      :class="{'input-group-prepend' : bootstrapStyling}"
+      :style="{'cursor:not-allowed;' : disabled}"
+      @click="showCalendar"
+    >
       <span :class="{'input-group-text' : bootstrapStyling}">
         <i :class="calendarButtonIcon">
           {{ calendarButtonIconContent }}
@@ -11,11 +17,11 @@
     </span>
     <!-- Input -->
     <input
+      :id="id"
+      :ref="refName"
       :type="inline ? 'hidden' : 'text'"
       :class="computedInputClass"
       :name="name"
-      :ref="refName"
-      :id="id"
       :value="formattedValue"
       :open-date="openDate"
       :placeholder="placeholder"
@@ -23,23 +29,31 @@
       :disabled="disabled"
       :required="required"
       :readonly="!typeable"
+      autocomplete="off"
       @click="showCalendar"
       @keyup="parseTypedDate"
       @blur="inputBlurred"
-      autocomplete="off">
+    >
     <!-- Clear Button -->
-    <span v-if="clearButton && selectedDate" class="vdp-datepicker__clear-button" :class="{'input-group-append' : bootstrapStyling}" @click="clearDate()">
+    <span
+      v-if="clearButton && selectedDate"
+      class="vdp-datepicker__clear-button"
+      :class="{'input-group-append' : bootstrapStyling}"
+      @click="clearDate()"
+    >
       <span :class="{'input-group-text' : bootstrapStyling}">
         <i :class="clearButtonIcon">
           <span v-if="!clearButtonIcon">&times;</span>
         </i>
       </span>
     </span>
-    <slot name="afterDateInput"></slot>
+    <slot name="afterDateInput" />
   </div>
 </template>
 <script>
+/* eslint-disable vue/require-default-prop */
 import { makeDateUtils } from '../utils/DateUtils'
+
 export default {
   props: {
     selectedDate: Date,
@@ -90,7 +104,7 @@ export default {
         if (typeof this.inputClass === 'string') {
           return [this.inputClass, 'form-control'].join(' ')
         }
-        return {'form-control': true, ...this.inputClass}
+        return { 'form-control': true, ...this.inputClass }
       }
       return this.inputClass
     }
@@ -99,6 +113,9 @@ export default {
     resetTypedDate () {
       this.typedDate = false
     }
+  },
+  mounted () {
+    this.input = this.$el.querySelector('input')
   },
   methods: {
     showCalendar () {
@@ -144,11 +161,8 @@ export default {
     clearDate () {
       this.$emit('clearDate')
     }
-  },
-  mounted () {
-    this.input = this.$el.querySelector('input')
   }
 }
 // eslint-disable-next-line
-;
+
 </script>

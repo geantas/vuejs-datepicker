@@ -1,105 +1,110 @@
 <template>
   <div class="vdp-datepicker" :class="[wrapperClass, isRtl ? 'rtl' : '']">
     <date-input
-      :selectedDate="selectedDate"
-      :resetTypedDate="resetTypedDate"
+      :id="id"
+      :selected-date="selectedDate"
+      :reset-typed-date="resetTypedDate"
       :format="format"
       :translation="translation"
       :inline="inline"
-      :id="id"
       :name="name"
-      :refName="refName"
-      :openDate="openDate"
+      :ref-name="refName"
+      :open-date="openDate"
       :placeholder="placeholder"
-      :inputClass="inputClass"
+      :input-class="inputClass"
       :typeable="typeable"
-      :clearButton="clearButton"
-      :clearButtonIcon="clearButtonIcon"
-      :calendarButton="calendarButton"
-      :calendarButtonIcon="calendarButtonIcon"
-      :calendarButtonIconContent="calendarButtonIconContent"
+      :clear-button="clearButton"
+      :clear-button-icon="clearButtonIcon"
+      :calendar-button="calendarButton"
+      :calendar-button-icon="calendarButtonIcon"
+      :calendar-button-icon-content="calendarButtonIconContent"
       :disabled="disabled"
       :required="required"
-      :bootstrapStyling="bootstrapStyling"
+      :bootstrap-styling="bootstrapStyling"
       :use-utc="useUtc"
       @showCalendar="showCalendar"
-      @closeCalendar="close"
+      @closeCalendar="close(true)"
       @typedDate="setTypedDate"
-      @clearDate="clearDate">
-      <slot name="afterDateInput" slot="afterDateInput"></slot>
+      @clearDate="clearDate"
+    >
+      <slot slot="afterDateInput" name="afterDateInput" />
     </date-input>
-
 
     <!-- Day View -->
     <picker-day
       v-if="allowedToShowView('day')"
-      :pageDate="pageDate"
-      :selectedDate="selectedDate"
-      :showDayView="showDayView"
-      :fullMonthName="fullMonthName"
-      :allowedToShowView="allowedToShowView"
-      :disabledDates="disabledDates"
+      :page-date="pageDate"
+      :selected-date="selectedDate"
+      :show-day-view="showDayView"
+      :full-month-name="fullMonthName"
+      :allowed-to-show-view="allowedToShowView"
+      :disabled-dates="disabledDates"
       :highlighted="highlighted"
-      :calendarClass="calendarClass"
-      :calendarStyle="calendarStyle"
+      :calendar-class="calendarClass"
+      :calendar-style="calendarStyle"
       :translation="translation"
-      :pageTimestamp="pageTimestamp"
-      :isRtl="isRtl"
-      :mondayFirst="mondayFirst"
-      :dayCellContent="dayCellContent"
+      :page-timestamp="pageTimestamp"
+      :is-rtl="isRtl"
+      :monday-first="mondayFirst"
+      :day-cell-content="dayCellContent"
       :use-utc="useUtc"
       @changedMonth="handleChangedMonthFromDayPicker"
       @selectDate="selectDate"
       @showMonthCalendar="showMonthCalendar"
-      @selectedDisabled="selectDisabledDate">
-      <slot name="beforeCalendarHeader" slot="beforeCalendarHeader"></slot>
+      @selectedDisabled="selectDisabledDate"
+    >
+      <slot slot="beforeCalendarHeader" name="beforeCalendarHeader" />
     </picker-day>
 
     <!-- Month View -->
     <picker-month
       v-if="allowedToShowView('month')"
-      :pageDate="pageDate"
-      :selectedDate="selectedDate"
-      :showMonthView="showMonthView"
-      :allowedToShowView="allowedToShowView"
-      :disabledDates="disabledDates"
-      :calendarClass="calendarClass"
-      :calendarStyle="calendarStyle"
+      :page-date="pageDate"
+      :selected-date="selectedDate"
+      :show-month-view="showMonthView"
+      :allowed-to-show-view="allowedToShowView"
+      :disabled-dates="disabledDates"
+      :calendar-class="calendarClass"
+      :calendar-style="calendarStyle"
       :translation="translation"
-      :isRtl="isRtl"
+      :is-rtl="isRtl"
       :use-utc="useUtc"
       @selectMonth="selectMonth"
       @showYearCalendar="showYearCalendar"
-      @changedYear="setPageDate">
-      <slot name="beforeCalendarHeader" slot="beforeCalendarHeader"></slot>
+      @changedYear="setPageDate"
+    >
+      <slot slot="beforeCalendarHeader" name="beforeCalendarHeader" />
     </picker-month>
 
     <!-- Year View -->
     <picker-year
       v-if="allowedToShowView('year')"
-      :pageDate="pageDate"
-      :selectedDate="selectedDate"
-      :showYearView="showYearView"
-      :allowedToShowView="allowedToShowView"
-      :disabledDates="disabledDates"
-      :calendarClass="calendarClass"
-      :calendarStyle="calendarStyle"
+      :page-date="pageDate"
+      :selected-date="selectedDate"
+      :show-year-view="showYearView"
+      :allowed-to-show-view="allowedToShowView"
+      :disabled-dates="disabledDates"
+      :calendar-class="calendarClass"
+      :calendar-style="calendarStyle"
       :translation="translation"
-      :isRtl="isRtl"
+      :is-rtl="isRtl"
       :use-utc="useUtc"
       @selectYear="selectYear"
-      @changedDecade="setPageDate">
-      <slot name="beforeCalendarHeader" slot="beforeCalendarHeader"></slot>
+      @changedDecade="setPageDate"
+    >
+      <slot slot="beforeCalendarHeader" name="beforeCalendarHeader" />
     </picker-year>
   </div>
 </template>
 <script>
+/* eslint-disable vue/require-default-prop */
+import utils, { makeDateUtils } from '../utils/DateUtils'
 import en from '../locale/translations/en'
 import DateInput from './DateInput.vue'
 import PickerDay from './PickerDay.vue'
 import PickerMonth from './PickerMonth.vue'
 import PickerYear from './PickerYear.vue'
-import utils, { makeDateUtils } from '../utils/DateUtils'
+
 export default {
   components: {
     DateInput,
@@ -186,17 +191,6 @@ export default {
       utils: constructedDateUtils
     }
   },
-  watch: {
-    value (value) {
-      this.setValue(value)
-    },
-    openDate () {
-      this.setPageDate()
-    },
-    initialView () {
-      this.setInitialView()
-    }
-  },
   computed: {
     computedInitialView () {
       if (!this.initialView) {
@@ -227,6 +221,20 @@ export default {
     isRtl () {
       return this.translation.rtl === true
     }
+  },
+  watch: {
+    value (value) {
+      this.setValue(value)
+    },
+    openDate () {
+      this.setPageDate()
+    },
+    initialView () {
+      this.setInitialView()
+    }
+  },
+  mounted () {
+    this.init()
   },
   methods: {
     /**
@@ -271,6 +279,9 @@ export default {
         default:
           this.showDayCalendar()
           break
+      }
+      if (!this.isInline) {
+        this.$emit('opened')
       }
     },
     /**
@@ -391,7 +402,7 @@ export default {
      */
     setValue (date) {
       if (typeof date === 'string' || typeof date === 'number') {
-        let parsed = new Date(date)
+        const parsed = new Date(date)
         date = isNaN(parsed.valueOf()) ? null : parsed
       }
       if (!date) {
@@ -452,14 +463,11 @@ export default {
         this.setInitialView()
       }
     }
-  },
-  mounted () {
-    this.init()
   }
 }
 // eslint-disable-next-line
-;
+
 </script>
-<style lang="stylus">
-@import '../styles/style'
+<style lang="scss">
+@import '../styles/style';
 </style>

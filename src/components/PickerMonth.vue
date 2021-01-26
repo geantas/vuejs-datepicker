@@ -1,26 +1,41 @@
 <template>
-  <div :class="[calendarClass, 'vdp-datepicker__calendar']" v-show="showMonthView" :style="calendarStyle" @mousedown.prevent>
-    <slot name="beforeCalendarHeader"></slot>
+  <div
+    v-show="showMonthView"
+    :class="[calendarClass, 'vdp-datepicker__calendar']"
+    :style="calendarStyle"
+    @mousedown.prevent
+  >
+    <slot name="beforeCalendarHeader" />
     <header>
       <span
-        @click="isRtl ? nextYear() : previousYear()"
         class="prev"
-        :class="{'disabled': isLeftNavDisabled}">&lt;</span>
-      <span class="month__year_btn" @click="showYearCalendar" :class="allowedToShowView('year') ? 'up' : ''">{{ pageYearName }}</span>
+        :class="{'disabled': isLeftNavDisabled}"
+        @click="isRtl ? nextYear() : previousYear()"
+      >&lt;</span>
       <span
-        @click="isRtl ? previousYear() : nextYear()"
+        class="month__year_btn"
+        :class="allowedToShowView('year') ? 'up' : ''"
+        @click="showYearCalendar"
+      >{{ pageYearName }}</span>
+      <span
         class="next"
-        :class="{'disabled': isRightNavDisabled}">&gt;</span>
+        :class="{'disabled': isRightNavDisabled}"
+        @click="isRtl ? previousYear() : nextYear()"
+      >&gt;</span>
     </header>
-    <span class="cell month"
+    <span
       v-for="month in months"
       :key="month.timestamp"
+      class="cell month"
       :class="{'selected': month.isSelected, 'disabled': month.isDisabled}"
-      @click.stop="selectMonth(month)">{{ month.month }}</span>
+      @click.stop="selectMonth(month)"
+    >{{ month.month }}</span>
   </div>
 </template>
 <script>
+/* eslint-disable vue/require-default-prop */
 import { makeDateUtils } from '../utils/DateUtils'
+
 export default {
   props: {
     showMonthView: Boolean,
@@ -44,9 +59,9 @@ export default {
   computed: {
     months () {
       const d = this.pageDate
-      let months = []
+      const months = []
       // set up a new date object to the beginning of the current 'page'
-      let dObj = this.useUtc
+      const dObj = this.useUtc
         ? new Date(Date.UTC(d.getUTCFullYear(), 0, d.getUTCDate()))
         : new Date(d.getFullYear(), 0, d.getDate(), d.getHours(), d.getMinutes())
       for (let i = 0; i < 12; i++) {
@@ -103,7 +118,7 @@ export default {
      * @param {Number} incrementBy
      */
     changeYear (incrementBy) {
-      let date = this.pageDate
+      const date = this.pageDate
       this.utils.setFullYear(date, this.utils.getFullYear(date) + incrementBy)
       this.$emit('changedYear', date)
     },
@@ -151,8 +166,8 @@ export default {
     },
     /**
      * Whether the selected date is in this month
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isSelectedMonth (date) {
       return (this.selectedDate &&
@@ -161,8 +176,8 @@ export default {
     },
     /**
      * Whether a month is disabled
-     * @param {Date}
      * @return {Boolean}
+     * @param date
      */
     isDisabledMonth (date) {
       let disabledDates = false
@@ -196,5 +211,5 @@ export default {
   }
 }
 // eslint-disable-next-line
-;
+
 </script>

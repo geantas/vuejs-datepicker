@@ -56,6 +56,10 @@ const utils = {
   /**
    * Sets the full year, using UTC or not
    * @param {Date} date
+   * @param value
+   * @param useUtc
+   * @param value
+   * @param useUtc
    */
   setFullYear (date, value, useUtc) {
     return this.useUtc ? date.setUTCFullYear(value) : date.setFullYear(value)
@@ -64,6 +68,10 @@ const utils = {
   /**
    * Sets the month, using UTC or not
    * @param {Date} date
+   * @param value
+   * @param useUtc
+   * @param value
+   * @param useUtc
    */
   setMonth (date, value, useUtc) {
     return this.useUtc ? date.setUTCMonth(value) : date.setMonth(value)
@@ -73,6 +81,7 @@ const utils = {
    * Sets the date, using UTC or not
    * @param {Date} date
    * @param {Number} value
+   * @param useUtc
    */
   setDate (date, value, useUtc) {
     return this.useUtc ? date.setUTCDate(value) : date.setDate(value)
@@ -112,26 +121,26 @@ const utils = {
 
   /**
    * Return abbreviated week day name
-   * @param {Date}
-   * @param {Array}
-   * @return {String}
+   * @param days
+   * @param date
+   * @param days
    */
   getDayNameAbbr (date, days) {
     if (typeof date !== 'object') {
-      throw TypeError('Invalid Type')
+      throw new TypeError('Invalid Type')
     }
     return days[this.getDay(date)]
   },
 
   /**
    * Return name of the month
-   * @param {Number|Date}
-   * @param {Array}
-   * @return {String}
+   * @param months
+   * @param month
+   * @param months
    */
   getMonthName (month, months) {
     if (!months) {
-      throw Error('missing 2nd parameter Months array')
+      throw new Error('missing 2nd parameter Months array')
     }
     if (typeof month === 'object') {
       return months[this.getMonth(month)]
@@ -139,17 +148,19 @@ const utils = {
     if (typeof month === 'number') {
       return months[month]
     }
-    throw TypeError('Invalid type')
+    throw new TypeError('Invalid type')
   },
 
   /**
    * Return an abbreviated version of the month
-   * @param {Number|Date}
-   * @return {String}
+   * @param month
+   * @param monthsAbbr
+   * @param month
+   * @param monthsAbbr
    */
   getMonthNameAbbr (month, monthsAbbr) {
     if (!monthsAbbr) {
-      throw Error('missing 2nd paramter Months array')
+      throw new Error('missing 2nd paramter Months array')
     }
     if (typeof month === 'object') {
       return monthsAbbr[this.getMonth(month)]
@@ -157,13 +168,13 @@ const utils = {
     if (typeof month === 'number') {
       return monthsAbbr[month]
     }
-    throw TypeError('Invalid type')
+    throw new TypeError('Invalid type')
   },
 
   /**
    * Alternative get total number of days in month
    * @param {Number} year
-   * @param {Number} m
+   * @param month
    * @return {Number}
    */
   daysInMonth (year, month) {
@@ -194,17 +205,17 @@ const utils = {
 
   /**
    * Formats date object
-   * @param {Date}
-   * @param {String}
-   * @param {Object}
-   * @return {String}
+   * @param translation
+   * @param date
+   * @param format
+   * @param translation
    */
   formatDate (date, format, translation) {
     translation = (!translation) ? en : translation
-    let year = this.getFullYear(date)
-    let month = this.getMonth(date) + 1
-    let day = this.getDate(date)
-    let str = format
+    const year = this.getFullYear(date)
+    const month = this.getMonth(date) + 1
+    const day = this.getDate(date)
+    const str = format
       .replace(/dd/, ('0' + day).slice(-2))
       .replace(/d/, day)
       .replace(/yyyy/, year)
@@ -225,7 +236,7 @@ const utils = {
    * @return {Array}
    */
   createDateArray (start, end) {
-    let dates = []
+    const dates = []
     while (start <= end) {
       dates.push(new Date(start))
       start = this.setDate(new Date(start), this.getDate(new Date(start)) + 1)
@@ -243,10 +254,8 @@ const utils = {
   }
 }
 
-export const makeDateUtils = useUtc => ({...utils, useUtc})
+export const makeDateUtils = useUtc => ({ ...utils, useUtc })
 
 export default {
   ...utils
 }
-// eslint-disable-next-line
-;
