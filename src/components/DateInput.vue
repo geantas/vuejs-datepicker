@@ -1,5 +1,8 @@
 <template>
-  <div :class="{'input-group' : bootstrapStyling}">
+  <div
+    class="w-100 flex-grow flex_col--jc"
+    :class="{'input-group' : bootstrapStyling}"
+  >
     <!-- Calendar Button -->
     <span
       v-if="calendarButton"
@@ -20,6 +23,7 @@
       :id="id"
       :ref="refName"
       :type="inline ? 'hidden' : 'text'"
+      class="date-input input-field w-100"
       :class="computedInputClass"
       :name="name"
       :value="formattedValue"
@@ -34,6 +38,13 @@
       @keyup="parseTypedDate"
       @blur="inputBlurred"
     >
+    <div
+      class="input-border"
+      :class="{
+        'is-active': calendarOpen,
+        'is-filled': formattedValue
+      }"
+    />
     <!-- Clear Button -->
     <span
       v-if="clearButton && selectedDate"
@@ -76,7 +87,8 @@ export default {
     required: Boolean,
     typeable: Boolean,
     bootstrapStyling: Boolean,
-    useUtc: Boolean
+    useUtc: Boolean,
+    calendarOpen: Boolean
   },
   data () {
     const constructedDateUtils = makeDateUtils(this.useUtc)

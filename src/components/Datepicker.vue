@@ -1,5 +1,5 @@
 <template>
-  <div class="vdp-datepicker" :class="[wrapperClass, isRtl ? 'rtl' : '']">
+  <div class="vdp-datepicker input-field w-100 flex-grow flex_col-ac-js" :class="[wrapperClass, isRtl ? 'rtl' : '']">
     <date-input
       :id="id"
       :selected-date="selectedDate"
@@ -22,6 +22,7 @@
       :required="required"
       :bootstrap-styling="bootstrapStyling"
       :use-utc="useUtc"
+      :calendar-open="isOpen"
       @showCalendar="showCalendar"
       @closeCalendar="close(true)"
       @typedDate="setTypedDate"
